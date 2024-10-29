@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Custom Record Status Dashboard</title>
+    <script>
+        function fetchData() {
+            fetch('https://your-redcap-api-endpoint/api/data/record_status_dashboard', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer YOUR_API_TOKEN',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                // Add code to display data on the dashboard
+            })
+            .catch(error => console.error('Error:', error));
+        }
+        fetchData();
+    </script>
+</head>
+<body>
+    <h1>Record Status Dashboard</h1>
+    <div id="dashboard">
+        <!-- Display data here -->
+    </div>
+</body>
+</html>
