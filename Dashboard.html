@@ -1,5 +1,3 @@
-# Create the HTML content to save as 'redcap_dashboard.html'
-html_content = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,83 +15,71 @@ html_content = """
 </style>
 </head>
 <body>
- 
 <h2>Dynamic REDCap Dashboard</h2>
 <p>Filter data using REDCap fields and attributes.</p>
- 
 <table id="redcapTable" class="display" style="width:100%">
 <thead>
-<tr id="tableHeaders">
-</tr>
+<tr id="tableHeaders"></tr>
 </thead>
-<tbody id="tableBody">
-</tbody>
+<tbody id="tableBody"></tbody>
 </table>
- 
 <div id="test-html" style="color:blue; font-weight:bold;">
-    This is a test of HTML and JavaScript in REDCap!
+        This is a test of HTML and JavaScript in REDCap!
 </div>
- 
 <button onclick="changeColor()">Click to change color</button>
- 
 <script type="text/javascript">
-    const API_URL = "https://a816-health.nyc.gov/REDCap/api/";
-    const API_TOKEN = "B1EF9BE1A3B6B0F465E2AC7752437F48"; // Replace with your API token
+        const API_URL = "https://a816-health.nyc.gov/REDCap/api/";
+        const API_TOKEN = "B1EF9BE1A3B6B0F465E2AC7752437F48"; // Replace with your API token
  
-    function fetchREDCapData() {
-        $.ajax({
-            url: "https://a816-health.nyc.gov/REDCap/api/",
-            type: 'POST',
-            data: {
-                'token': "B1EF9BE1A3B6B0F465E2AC7752437F48",
-                'content': 'record',
-                'format': 'json',
-                'type': 'flat'
-            },
-            success: function(data) {
-                renderTable(data);
-            },
-            error: function(error) {
-                console.error("Error fetching data from REDCap:", error);
-                alert("Failed to retrieve data from REDCap.");
-            }
-        });
-    }
- 
-    function renderTable(data) {
-        if (data.length === 0) {
-            alert("No data found.");
-            return;
+        function fetchREDCapData() {
+            $.ajax({
+                url: "https://a816-health.nyc.gov/REDCap/api/",
+                type: 'POST',
+                data: {
+                    'token': "B1EF9BE1A3B6B0F465E2AC7752437F48",
+                    'content': 'record',
+                    'format': 'json',
+                    'type': 'flat'
+                },
+                success: function(data) {
+                    renderTable(data);
+                },
+                error: function(error) {
+                    console.error("Error fetching data from REDCap:", error);
+                    alert("Failed to retrieve data from REDCap.");
+                }
+            });
         }
  
-        let headers = Object.keys(data[0]);
-        headers.forEach(header => {
-            $("#tableHeaders").append(`<th>${header}</th>`);
-        });
- 
-        data.forEach(record => {
-            let row = '<tr>';
+        function renderTable(data) {
+            if (data.length === 0) {
+                alert("No data found.");
+                return;
+            }
+            let headers = Object.keys(data[0]);
             headers.forEach(header => {
-                row += `<td>${record[header]}</td>`;
+                $("#tableHeaders").append(`<th>${header}</th>`);
             });
-            row += '</tr>';
-            $("#tableBody").append(row);
+            data.forEach(record => {
+                let row = '<tr>';
+                headers.forEach(header => {
+                    row += `<td>${record[header]}</td>`;
+                });
+                row += '</tr>';
+                $("#tableBody").append(row);
+            });
+            $('#redcapTable').DataTable();
+        }
+ 
+        function changeColor() {
+            document.getElementById("test-html").style.color = "green";
+            console.log("JavaScript is working in REDCap!");
+            alert("JavaScript is working!");
+        }
+ 
+        $(document).ready(function() {
+            fetchREDCapData();
         });
- 
-        $('#redcapTable').DataTable();
-    }
- 
-    function changeColor() {
-        document.getElementById("test-html").style.color = "green";
-        console.log("JavaScript is working in REDCap!");
-        alert("JavaScript is working!");
-    }
- 
-    $(document).ready(function() {
-        fetchREDCapData();
-    });
 </script>
- 
 </body>
 </html>
-"""
