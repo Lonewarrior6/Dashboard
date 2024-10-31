@@ -1,10 +1,11 @@
+# Create the HTML content to save as 'redcap_dashboard.html'
+html_content = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>REDCap Dynamic Dashboard</title>
-<!-- jQuery and DataTables CSS/JS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -20,24 +21,25 @@
 <h2>Dynamic REDCap Dashboard</h2>
 <p>Filter data using REDCap fields and attributes.</p>
  
-<!-- Table to display REDCap data -->
 <table id="redcapTable" class="display" style="width:100%">
 <thead>
 <tr id="tableHeaders">
-<!-- Headers will be dynamically generated -->
 </tr>
 </thead>
 <tbody id="tableBody">
-<!-- Data will be dynamically generated -->
 </tbody>
 </table>
  
-<script>
-    // REDCap API URL and Token
-    const API_URL = "https://a816-health.nyc.gov/REDCap/api/";
-    const API_TOKEN = "B1EF9BE1A3B6B0F465E2AC7752437F48";  // Replace with your API token
+<div id="test-html" style="color:blue; font-weight:bold;">
+    This is a test of HTML and JavaScript in REDCap!
+</div>
  
-    // Fetch REDCap data
+<button onclick="changeColor()">Click to change color</button>
+ 
+<script type="text/javascript">
+    const API_URL = https://a816-health.nyc.gov/REDCap/api/";
+    const API_TOKEN = "B1EF9BE1A3B6B0F465E2AC7752437F48"; // Replace with your API token
+ 
     function fetchREDCapData() {
         $.ajax({
             url: https://a816-health.nyc.gov/REDCap/api/,
@@ -58,20 +60,17 @@
         });
     }
  
-    // Render table with fetched data
     function renderTable(data) {
         if (data.length === 0) {
             alert("No data found.");
             return;
         }
  
-        // Dynamically create table headers based on REDCap fields
         let headers = Object.keys(data[0]);
         headers.forEach(header => {
             $("#tableHeaders").append(`<th>${header}</th>`);
         });
  
-        // Populate table rows with REDCap data
         data.forEach(record => {
             let row = '<tr>';
             headers.forEach(header => {
@@ -81,11 +80,15 @@
             $("#tableBody").append(row);
         });
  
-        // Initialize DataTable for dynamic filtering
         $('#redcapTable').DataTable();
     }
  
-    // Load REDCap data on page load
+    function changeColor() {
+        document.getElementById("test-html").style.color = "green";
+        console.log("JavaScript is working in REDCap!");
+        alert("JavaScript is working!");
+    }
+ 
     $(document).ready(function() {
         fetchREDCapData();
     });
@@ -93,3 +96,11 @@
  
 </body>
 </html>
+"""
+ 
+# Save the HTML content to a file
+file_path = "/mnt/data/redcap_dashboard.html"
+with open(file_path, "w") as file:
+    file.write(html_content)
+ 
+file_path
