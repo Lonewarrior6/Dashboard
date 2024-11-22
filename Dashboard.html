@@ -55,7 +55,7 @@
 
 <script type="text/javascript">
     const API_URL = "https://a816-health.nyc.gov/REDCap/api/"; // Replace with your REDCap API URL
-    const API_TOKEN = "EF8D98075D2B481FE7E6E7318E81E127"; // Replace with your API token
+    const API_TOKEN = "39454B825D089DB38F3DB256332881A5"; // Replace with your API token
 
     let fetchedData = []; // Holds the original data from REDCap
 
@@ -64,7 +64,7 @@
             url: "https://a816-health.nyc.gov/REDCap/api/", // Replace with your REDCap API URL
             type: 'POST',
             data: {
-                'token': "EF8D98075D2B481FE7E6E7318E81E127", // Replace with your API token
+                'token': "39454B825D089DB38F3DB256332881A5", // Replace with your API token
                 'content': 'record',
                 'format': 'json',
                 'type': 'flat'
@@ -82,6 +82,7 @@
     }
 
     function populatePracticeNames(data) {
+        // Populate unique practice names
         const uniquePractices = [...new Set(data.map(record => record.practicename || "Unknown"))];
         uniquePractices.forEach(practice => {
             $("#practiceNameFilter").append(`<option value="${practice}">${practice}</option>`);
@@ -122,11 +123,15 @@
         const toDate = $("#toDate").val();
 
         const filteredData = fetchedData.filter(record => {
-            const matchesPractice = !practiceFilter || record.practicename === practiceFilter;
-            const recordDate = new Date(record.date || ""); // Adjust the field name for your date field
+            // Filter by Practice Name
+            const matchesPractice = !practiceFilter || record.practicename == practiceFilter;
+
+            // Filter by Date Range
+            const recordDate = new Date(record.date || ""); // Replace 'date' with the actual field name
             const matchesDate =
                 (!fromDate || recordDate >= new Date(fromDate)) &&
                 (!toDate || recordDate <= new Date(toDate));
+
             return matchesPractice && matchesDate;
         });
 
@@ -141,6 +146,8 @@
 
     $(document).ready(function() {
         fetchREDCapData();
+        // Attach filter logic to dropdown change
+        $("#practiceNameFilter").on("change", applyFilters);
     });
 </script>
 </body>
