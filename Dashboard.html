@@ -30,8 +30,8 @@
 <p>Filter data using REDCap fields and attributes.</p>
 
 <div class="filter-section">
-    <label for="practicenameFilter">Practice Name:</label>
-    <select id="practicenameFilter">
+    <label for="practiceNameFilter">Practice Name:</label>
+    <select id="practiceNameFilter">
         <option value="">All Practices</option>
     </select>
     <label for="fromDate">From Date:</label>
@@ -48,30 +48,37 @@
     <tbody id="tableBody"></tbody>
 </table>
 
-<div id="test-html" style="color:blue; font-weight:bold;">
-    This is a test of HTML and JavaScript in REDCap!
-</div>
-<button onclick="changeColor()">Click to change color</button>
-
 <script type="text/javascript">
     const API_URL = "https://a816-health.nyc.gov/REDCap/api/"; // Replace with your REDCap API URL
     const API_TOKEN = "EF8D98075D2B481FE7E6E7318E81E127"; // Replace with your API token
 
     let fetchedData = []; // Holds the original data from REDCap
 
+    // Mapping practice codes to names
+    const practiceMapping = {
+        "1": "Broadway Internal Medical",
+        "2": "Corona Medical PC",
+        "3": "Family Health NP Services, P.C.",
+        "4": "Flatlands Medical-Urgent Care",
+        "5": "Linden Family Medical Care P.C.",
+        "6": "Marcia Morgan MD PC",
+        "7": "Mergie Desir MD, P.L.L.C."
+    };
+
     function fetchREDCapData() {
         $.ajax({
-            url: "https://a816-health.nyc.gov/REDCap/api/", // Replace with your REDCap API URL
+            url: API_URL,
             type: 'POST',
             data: {
-                'token': "EF8D98075D2B481FE7E6E7318E81E127", // Replace with your API token
+                'token': API_TOKEN,
                 'content': 'record',
                 'format': 'json',
-                'type': 'flat'
+                'type': 'flat',
+                'fields': 'practicename,record_creation_date' // Adjust fields as necessary
             },
             success: function(data) {
                 fetchedData = data; // Store the original data
-                populatePracticenames(data);
+                populatePracticeNames(data);
                 renderTable(data);
             },
             error: function(error) {
@@ -81,10 +88,10 @@
         });
     }
 
-    function populatePracticenames(data) {
-        const uniquePractices = [...new Set(data.map(record => record.practicename || "Unknown"))];
+    function populatePracticeNames(data) {
+        const uniquePractices = [...new Set(data.map(record => practiceMapping[record.practicename] || "Unknown"))];
         uniquePractices.forEach(practice => {
-            $("#practicenameFilter").append(`<option value="${practice}">${practice}</option>`);
+            $("#practiceNameFilter").append(`<option value="${practice}">${practice}</option>`);
         });
     }
 
@@ -117,13 +124,13 @@
     }
 
     function applyFilters() {
-        const practiceFilter = $("#practicenameFilter").val();
+        const practiceFilter = $("#practiceNameFilter").val();
         const fromDate = $("#fromDate").val();
         const toDate = $("#toDate").val();
 
         const filteredData = fetchedData.filter(record => {
-            const matchesPractice = !practiceFilter || record.practicename === practiceFilter;
-            const recordDate = new Date(record.date || ""); // Adjust the field name for your date field
+            const matchesPractice = !practiceFilter || practiceMapping[record.practicename] === practiceFilter;
+            const recordDate = new Date(record.record_creation_date || ""); // Adjust field name if necessary
             const matchesDate =
                 (!fromDate || recordDate >= new Date(fromDate)) &&
                 (!toDate || recordDate <= new Date(toDate));
@@ -131,12 +138,6 @@
         });
 
         renderTable(filteredData);
-    }
-
-    function changeColor() {
-        document.getElementById("test-html").style.color = "green";
-        console.log("JavaScript is working in REDCap!");
-        alert("JavaScript is working!");
     }
 
     $(document).ready(function() {
