@@ -55,16 +55,16 @@
 
 <script type="text/javascript">
     const API_URL = "https://a816-health.nyc.gov/REDCap/api/"; // Replace with your REDCap API URL
-    const API_TOKEN = ""; // Replace with your API token
+    const API_TOKEN = "EF8D98075D2B481FE7E6E7318E81E127"; // Replace with your API token
 
     let fetchedData = []; // Holds the original data from REDCap
 
     function fetchREDCapData() {
         $.ajax({
-            url: API_URL, // Replace with your REDCap API URL
+            url: "https://a816-health.nyc.gov/REDCap/api/", // Replace with your REDCap API URL
             type: 'POST',
             data: {
-                'token': API_TOKEN, // Replace with your API token
+                'token': "EF8D98075D2B481FE7E6E7318E81E127", // Replace with your API token
                 'content': 'record',
                 'format': 'json',
                 'type': 'flat'
