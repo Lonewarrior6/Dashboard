@@ -67,10 +67,10 @@
 
     function fetchREDCapData() {
         $.ajax({
-            url: API_URL,
+            url: 'https://a816-health.nyc.gov/REDCap/api/',
             type: 'POST',
             data: {
-                'token': API_TOKEN,
+                'token': 'EF8D98075D2B481FE7E6E7318E81E127',
                 'content': 'record',
                 'format': 'json',
                 'type': 'flat',
