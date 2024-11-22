@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REDCap Dynamic Dashboard</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
+    .filter-section {
+        margin-bottom: 20px;
+    }
+    .filter-section label {
+        margin-right: 10px;
+        font-weight: bold;
+    }
+    .filter-section input, .filter-section select {
+        margin-right: 20px;
+        padding: 5px;
+    }
+</style>
+</head>
+<body>
+<h2>Dynamic REDCap Dashboard</h2>
+<p>Filter data using REDCap fields and attributes.</p>
+
+<div class="filter-section">
+    <label for="practiceNameFilter">Practice Name:</label>
+    <select id="practiceNameFilter">
+        <option value="">All Practices</option>
+    </select>
+    <label for="fromDate">From Date:</label>
+    <input type="date" id="fromDate">
+    <label for="toDate">To Date:</label>
+    <input type="date" id="toDate">
+    <button onclick="applyFilters()">Apply Filters</button>
+</div>
+
+<table id="redcapTable" class="display" style="width:100%">
+    <thead>
+        <tr id="tableHeaders"></tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+</table>
+
+<div id="test-html" style="color:blue; font-weight:bold;">
+    This is a test of HTML and JavaScript in REDCap!
+</div>
+<button onclick="changeColor()">Click to change color</button>
+
+<script type="text/javascript">
+    const API_URL = ""; // Replace with your REDCap API URL
+    const API_TOKEN = ""; // Replace with your API token
+
+    let fetchedData = []; // Holds the original data from REDCap
+
+    function fetchREDCapData() {
+        $.ajax({
+            url: API_URL, // Replace with your REDCap API URL
+            type: 'POST',
+            data: {
+                'token': API_TOKEN, // Replace with your API token
+                'content': 'record',
+                'format': 'json',
+                'type': 'flat'
+            },
+            success: function(data) {
+                fetchedData = data; // Store the original data
+                populatePracticeNames(data);
+                renderTable(data);
+            },
+            error: function(error) {
+                console.error("Error fetching data from REDCap:", error);
+                alert("Failed to retrieve data from REDCap.");
+            }
+        });
+    }
+
+    function populatePracticeNames(data) {
+        // Populate unique practice names
+        const uniquePractices = [...new Set(data.map(record => record.practicename || "Unknown"))];
+        uniquePractices.forEach(practice => {
+            $("#practiceNameFilter").append(`<option value="${practice}">${practice}</option>`);
+        });
+    }
+
+    function renderTable(data) {
+        $("#tableHeaders").empty();
+        $("#tableBody").empty();
+
+        if (data.length === 0) {
+            alert("No data found.");
+            return;
+        }
+
+        let headers = Object.keys(data[0]);
+        headers.forEach(header => {
+            $("#tableHeaders").append(`<th>${header}</th>`);
+        });
+
+        data.forEach(record => {
+            let row = '<tr>';
+            headers.forEach(header => {
+                row += `<td>${record[header] || ""}</td>`;
+            });
+            row += '</tr>';
+            $("#tableBody").append(row);
+        });
+
+        $('#redcapTable').DataTable({
+            destroy: true // Allow reinitialization for filtered data
+        });
+    }
+
+    function applyFilters() {
+        const practiceFilter = $("#practiceNameFilter").val();
+        const fromDate = $("#fromDate").val();
+        const toDate = $("#toDate").val();
+
+        const filteredData = fetchedData.filter(record => {
+            // Filter by Practice Name
+            const matchesPractice = !practiceFilter || record.practicename == practiceFilter;
+
+            // Filter by Date Range
+            const recordDate = new Date(record.date || ""); // Replace 'date' with the actual field name
+            const matchesDate =
+                (!fromDate || recordDate >= new Date(fromDate)) &&
+                (!toDate || recordDate <= new Date(toDate));
+
+            return matchesPractice && matchesDate;
+        });
+
+        renderTable(filteredData);
+    }
+
+    function changeColor() {
+        document.getElementById("test-html").style.color = "green";
+        console.log("JavaScript is working in REDCap!");
+        alert("JavaScript is working!");
+    }
+
+    $(document).ready(function() {
+        fetchREDCapData();
+        // Attach filter logic to dropdown change
+        $("#practiceNameFilter").on("change", applyFilters);
+    });
+</script>
+</body>
+</html>
