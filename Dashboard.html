@@ -30,8 +30,8 @@
 <p>Filter data using REDCap fields and attributes.</p>
 
 <div class="filter-section">
-    <label for="practiceNameFilter">Practice Name:</label>
-    <select id="practiceNameFilter">
+    <label for="practicenameFilter">Practice Name:</label>
+    <select id="practicenameFilter">
         <option value="">All Practices</option>
     </select>
     <label for="fromDate">From Date:</label>
@@ -71,7 +71,7 @@
             },
             success: function(data) {
                 fetchedData = data; // Store the original data
-                populatePracticeNames(data);
+                populatePracticenames(data);
                 renderTable(data);
             },
             error: function(error) {
@@ -81,10 +81,10 @@
         });
     }
 
-    function populatePracticeNames(data) {
+    function populatePracticenames(data) {
         const uniquePractices = [...new Set(data.map(record => record.practicename || "Unknown"))];
         uniquePractices.forEach(practice => {
-            $("#practiceNameFilter").append(`<option value="${practice}">${practice}</option>`);
+            $("#practicenameFilter").append(`<option value="${practice}">${practice}</option>`);
         });
     }
 
@@ -117,7 +117,7 @@
     }
 
     function applyFilters() {
-        const practiceFilter = $("#practiceNameFilter").val();
+        const practiceFilter = $("#practicenameFilter").val();
         const fromDate = $("#fromDate").val();
         const toDate = $("#toDate").val();
 
