@@ -28,15 +28,15 @@
 </div>
 <button onclick="changeColor()">Click to change color</button>
 <script type="text/javascript">
-        const API_URL = "";
-        const API_TOKEN = ""; // Replace with your API token
+        const API_URL = "https://a816-health.nyc.gov/REDCap/api/";
+        const API_TOKEN = "EF8D98075D2B481FE7E6E7318E81E127"; // Replace with your API token
  
         function fetchREDCapData() {
             $.ajax({
                 url: "https://a816-health.nyc.gov/REDCap/api/",
                 type: 'POST',
                 data: {
-                    'token': "B1EF9BE1A3B6B0F465E2AC7752437F48",
+                    'token': "EF8D98075D2B481FE7E6E7318E81E127",
                     'content': 'record',
                     'format': 'json',
                     'type': 'flat'
